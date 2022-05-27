@@ -20,7 +20,7 @@ IF=wlo1 && tcpdump -i $F1 -w analysis.pcap
 Change the IPs (10.42.1.xxx) to the ones that match you devices
 
 ```sh
-./bin/bash shape.sh
+/bin/bash shape.sh
 ```
 
 ## Allocating static IPs to the hosts
