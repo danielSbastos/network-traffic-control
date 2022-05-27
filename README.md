@@ -59,8 +59,41 @@ IF=wlo1 && tcpdump -i $IF -w analysis.pcap
 
 ## Control | Applying Traffic Control configurations
 
+The `shape.sh` file is responsible for applying the traffic control.
 
-Change the IPs (10.42.1.xxx) to the ones that match you devices
+
+### Details
+
+1) Create the root qdisc with [`cbq`](https://en.wikipedia.org/wiki/Class-based_queueing) (class based queuing) and set the bandwidth to 100mbits.
+
+```sh
+tc qdisc add dev $IF root handle 1: cbq avpkt 1000 bandwidth 100mbit
+```
+
+2) Create cbq classes, filters and leaf qdiscs, each as a child, for each host.
+ 
+	2.1) Add class for `$DEVICE1-IP` and filter, then attach a `netem` qdisc as leaf node to the `classid 1:2` and add a 100ms latency.
+	```sh
+	tc class add dev $IF parent 1: classid 1:2 cbq rate 100mbit allot 1500 prio 5 bounded isolated
+	tc filter add dev $IF parent 1: protocol ip prio 16 u32 match ip dst $DEVICE1-IP flowid 1:2
+	tc qdisc add dev $IF parent 1:2 handle 12: netem delay 100ms
+	```
+
+	2.2) Add class for `$DEVICE2-IP` and filter, then attach a `netem` qdisc as leaf node to the `classid 1:4` and add a 5% packet loss (drop).
+
+	```sh
+	tc class add dev $IF parent 1: classid 1:4 cbq rate 100mbit allot 1500 prio 5 bounded isolated
+	tc filter add dev $IF parent 1: protocol ip prio 16 u32 match ip dst $DEVICE2-IP flowid 1:4
+	tc qdisc add dev $IF parent 1:4 handle 14: netem drop 5%
+	```
+	2.3) Add class for `$DEVICE3-IP` and filter. There was no need to the use of another `qdisc` since rate limiting (`rate 2bmit`) can be done via a class.
+
+	```sh
+	tc class add dev $IF parent 1: classid 1:3 cbq rate 2mbit allot 1500 prio 5 bounded isolated
+	tc filter add dev $IF parent 1: protocol ip prio 16 u32 match ip dst $DEVICE3-IP flowid 1:3
+	```
+
+Change the IPs (a.b.c.d) to the ones that match you devices.
 
 ```sh
 /bin/bash shape.sh
