@@ -13,7 +13,7 @@ Group members: [@danielSbastos](https://github.com/danielSbastos), [@rossanaoliv
 `IF` is the wireless interface.
 
 ```sh
-IF=wlo1 && tcpdump -i $F1 -w analysis.pcap
+IF=wlo1 && tcpdump -i $IF -w analysis.pcap
 ```
 
 ## Applying Traffic Control configurations
