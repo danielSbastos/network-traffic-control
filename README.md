@@ -1,7 +1,7 @@
 # Network Traffic Control
 Controlling and monitoring a local network and its hosts
 
-Group members: @danielSbastos, @rossanaoliveirasouza, @isabelaaaguilar and @Kronomant
+Group members: [@danielSbastos](https://github.com/danielSbastos), [@rossanaoliveirasouza](https://github.com/rossanaoliveirasouza), [@isabelaaaguilar](https://github.com/isabelaaaguilar) and [@Kronomant](https://github.com/Kronomant).
 
 ## Architecture
 
